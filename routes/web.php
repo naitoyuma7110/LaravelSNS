@@ -20,7 +20,14 @@ Auth::routes();
 Route::get('/', 'ArticleController@index')->name('articles.index');
 
 // 一覧,個別表示,新規登録,更新,削除機能のデフォルトルーティング、アクションの登録
-// 追加されたルートにURL:/articleでindexアクション：一覧表示があるが、↑の個別で作製したアクションと重複するので無効にする
-Route::resource('/articles', 'ArticleController')->except(['index'])->middleware('auth');
-// ↑MiddlewareのAuthによるルート制限を設定し、URL入力による未ログイン者のアクセスを防ぐ
-// 上記以外の例えばindexアクションによる一覧画面は個別で作製したルートなので制限されない
+// ↑の個別で作製したアクションと重複するのでexceptメソッドで無効にする
+// またMiddlewareのAuthによるルート制限を設定し、URL入力による未ログイン者のアクセスを防ぐ
+Route::resource('/articles', 'ArticleController')->except(['index', 'show'])->middleware('auth');
+
+// ↑で除いたshowアクションをAuthを適応せず使用するため、showのみ再び定義
+Route::resource('/articles', 'ArticleController')->only(['show']);
+
+Route::prefix('articles')->name('articles.')->group(function () {
+  Route::put('/{article}/like', 'ArticleController@like')->name('like')->middleware('auth');
+  Route::delete('/{article}/like', 'ArticleController@unlike')->name('unlike')->middleware('auth');
+});

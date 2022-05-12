@@ -1,5 +1,13 @@
+# git管理対象外のファイル郡
+
 /node_modules
+#==========この行を追加
+/public/css
 /public/hot
+#==========ここから追加==========
+/public/js  
+/public/mix-manifest.json
+#==========ここまで追加==========
 /public/storage
 /storage/*.key
 /vendor

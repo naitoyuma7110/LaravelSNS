@@ -14,6 +14,12 @@ class CreateArticlesTable extends Migration
     // migrateによるarticlesテーブルの作成
     public function up()
     {
+
+        if (Schema::hasTable('users')) {
+            // テーブルが存在していればリターン
+            return;
+        }
+
         Schema::create('articles', function (Blueprint $table) {
             $table->bigIncrements('id');
             //==========ここから追加==========

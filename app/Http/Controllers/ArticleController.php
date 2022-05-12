@@ -12,6 +12,16 @@ use Illuminate\Http\Request;
 
 class ArticleController extends Controller
 {
+
+    // __construct:クラスのインスタンス化時に初期処理として実行されるメソッド
+    public function __construct()
+    {
+        // authorizeResource：リソースコントローラー(policy)の使用。
+        // 第一引数にモデルのクラス名、第二引数にこのモデルがルーティング上でURLを作成する時に渡すIDパラメータ名(この場合'/article/{article}/'の{}の中身) 
+        $this->authorizeResource(Article::class, 'article');
+    }
+
+
     public function index()
     {
         // ダミーデータ
@@ -69,12 +79,44 @@ class ArticleController extends Controller
     // この状態はメソッドがクラスに依存していると表現され、テストや変更がしやすい。(メソッドの書き換えが必要ないから)
     public function store(ArticleRequest $request, Article $article)
     {
-        $article->title = $request->title;
-        $article->body = $request->body;
+        // 以下のように個別でモデル-DBを更新しても良いがfillの使用が推奨される
+        // $article->title = $request->title;
+        // $article->body = $request->body;
+
+        // fillメソッドを使用すると、DBの更新がArticleモデルで定義したfillableプロパティのパラメーター（この場合title,body）に限定される
+        // model-DB側のパラメータとrequest情報のパラメータが一致している必要がある？ 
+        $article->fill($request->all());
 
         // ArticleモデルとUserモデルは紐づけ済みであるため->user()でアクセルしidを取得している
         $article->user_id = $request->user()->id;
         $article->save();
         return redirect()->route('articles.index');
+    }
+
+
+    // editアクションは'/article/id/edit'で呼び出されるが、このidをパラメータに持つarticleモデルが作製される
+    public function edit(Article $article)
+    {
+
+        // article.bladeにarticleモデルを渡す
+        return view('articles.edit', ['article' => $article]);
+    }
+
+    public function update(ArticleRequest $request, Article $article)
+    {
+        // form入力内容をArticleRequestインスタンスから取得し、モデルのfill関数でKeyチェックと保存
+        $article->fill($request->all())->save();
+        return redirect()->route('articles.index');
+    }
+
+    public function destroy(Article $article)
+    {
+        $article->delete();
+        return redirect()->route('articles.index');
+    }
+
+    public function show(Article $article)
+    {
+        return view('articles.show', ['article' => $article]);
     }
 }
