@@ -27,7 +27,14 @@ Route::resource('/articles', 'ArticleController')->except(['index', 'show'])->mi
 // ↑で除いたshowアクションをAuthを適応せず使用するため、showのみ再び定義
 Route::resource('/articles', 'ArticleController')->only(['show']);
 
+
+
+// いいねボタンのルーティング
+// prefixで引数をURLに付加しnameでURL名を'article/'に指定
+// group()はそこまでの一連の処理を無名関数として、後述のput/deleteのlikeとunlikeメソッドの登録コードを短縮している
+
 Route::prefix('articles')->name('articles.')->group(function () {
+  // put/deleteメソッドで'article(prefix付加部分)/{article(記事id)/like}'へリクエストを送る事でlike/unlikeアクション
   Route::put('/{article}/like', 'ArticleController@like')->name('like')->middleware('auth');
   Route::delete('/{article}/like', 'ArticleController@unlike')->name('unlike')->middleware('auth');
 });

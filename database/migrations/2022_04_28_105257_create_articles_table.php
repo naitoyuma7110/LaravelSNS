@@ -15,7 +15,7 @@ class CreateArticlesTable extends Migration
     public function up()
     {
 
-        if (Schema::hasTable('users')) {
+        if (Schema::hasTable('articles')) {
             // テーブルが存在していればリターン
             return;
         }
@@ -25,7 +25,8 @@ class CreateArticlesTable extends Migration
             //==========ここから追加==========
             $table->string('title');
             $table->text('body');
-            $table->bigInteger('user_id');
+            // $table->bigInteger('user_id');
+            $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users');
             //==========ここまで追加==========
             $table->timestamps();

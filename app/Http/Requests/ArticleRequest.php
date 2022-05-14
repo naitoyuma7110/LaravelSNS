@@ -30,7 +30,9 @@ class ArticleRequest extends FormRequest
     {
         return [
             'title' => 'required|max:50',
-            'body' => 'required|max:500'
+            'body' => 'required|max:500',
+            // Json形式のチェックと正規表現によるバリデーション:'/'とスペースを含まない
+            'tags' => 'json|regex:/^(?!.*\s).+$/u|regex:/^(?!.*\/).*$/u'
         ];
     }
 
@@ -39,7 +41,26 @@ class ArticleRequest extends FormRequest
     {
         return [
             'title' => 'タイトル',
-            'body' => '本文'
+            'body' => '本文',
+            'tags' => 'タグ',
         ];
+    }
+
+    // Json形式で受け取ったタグ情報を整形する
+    // passedValidationはバリデーション後に自動的に呼ばれるメソッド
+    public function passedValidation()
+    {
+        // $thisはフォームリクエスト情報を持つこのクラス
+        // $this->name属性で各値にアクセスできる
+        // collectでコレクションに変換(便利なメソッドを使用できる拡張された配列)
+        $this->tags = collect(json_decode($this->tags))
+            // 5個以上のタグは最初の5個以外は削除
+            ->slice(0, 5)
+            // コレクションを$requestTagとしてmapメソッドに渡す
+            // mapはコレクションの各配列に順次処理を行い、結果として得た新しい配列を返す
+            ->map(function ($requestTag) {
+                // 各配列からKey=textの値を取り出す
+                return $requestTag->text;
+            });
     }
 }

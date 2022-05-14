@@ -67,12 +67,34 @@
       <div class="card-text">
         {{-- v-bindを使用しコンポーネントにログイン中のユーザーのいいね情報(Boolean→Strung)を渡す(プロップスダウン) --}}
         {{-- @jsonでisLikedByメソッドの型をBoolean値から文字列に変換できる --}}
+        {{-- Laravel側でAuth情報を取得し(chcekでログイン中か否か)、authorizedプロパティに渡す --}}
+        {{-- :なしでv-bindせずに(固定値となりリアクティブでない値)プロパティを渡せる。知らなかった --}}
+        {{-- endpointはリンク先URL(/article/{article(モデル)/like})を渡す --}}
         <article-like 
         :initial-is-liked-by='@json($article->isLikedBy(Auth::user()))'
         :initial-count-likes='@json($article->count_likes)'
+        :authorized='@json(Auth::check())'
+        endpoint="{{ route('articles.like', ['article' => $article]) }}"
         >
         </article-like>
       </div>
     </div>
   </div>
+
+  {{-- この記事のarticleモデルに紐づいたtagモデルを取得する --}}
+  @foreach($article->tags as $tag)
+  {{-- 最初の一回目のループ --}}
+  {{-- タグが1つもない時に不必要なHTML要素を作成しないため --}}
+    @if($loop->first)
+      <div class="card-body pt-0 pb-4 pl-3">
+        <div class="card-text line-height">
+    @endif
+          <a href="" class="border p-1 mr-1 mt-1 text-muted">
+            {{ $tag->name }}
+          </a>
+    @if($loop->last)
+        </div>
+      </div>
+    @endif
+  @endforeach
 </div>

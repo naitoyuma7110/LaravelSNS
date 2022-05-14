@@ -39,6 +39,9 @@ class Article extends Model
     public function likes(): BelongsToMany
     {
         // いいねテーブルと記事の紐づけは多対多
+        // 記事モデルに紐づくlikesテーブルの情報からUserモデルをコレクション(配列拡張)で得る
+        // Articleテーブル(ID)->likesテーブル(article_id)-(user_id)->Userテーブル(id)
+        // この場合、中間のlikesテーブルを第2引数へ記述する。これだけでArticle-Likes-Usersの紐づけ情報を参照できる。
         return $this->belongsToMany('App\User', 'likes')->withTimestamps();
     }
 
@@ -66,5 +69,13 @@ class Article extends Model
     {
         // 記事のIDに対応したlilesテーブルを取得し数を取得（これがいいね数）
         return $this->likes->count();
+    }
+
+    public function tags(): BelongsToMany
+    {
+        // article-tags-tagのリレーションを作成
+        // 本来は中間テーブルのarticle_tagを第2引数に記述する必要があるが今回は
+        // 命名規則にのっとるため省略可能
+        return $this->belongsToMany('App\tag')->withTimestamps();
     }
 }

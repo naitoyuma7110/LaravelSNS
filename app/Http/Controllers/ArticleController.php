@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Article;
+use App\Tag;
 
 // 作製したArticleRequestクラスをインポート
 use App\Http\Requests\ArticleRequest;
@@ -90,6 +91,20 @@ class ArticleController extends Controller
         // ArticleモデルとUserモデルは紐づけ済みであるため->user()でアクセルしidを取得している
         $article->user_id = $request->user()->id;
         $article->save();
+
+
+        // ArticleRequestではタグ情報をコレクションに変換する処理を記述した
+        // eachメソッド内の処理(コールバック関数)でスコープ外部で定義された$articleが使用できるようuse
+        $request->tags->each(function ($tagName) use ($article) {
+            // TagmモデルはEloquentモデルなのでどこでも呼び出せる
+            // firstOrCreateではnameカラムに渡されたタグ名があればそのモデルを返す
+            // また無ければcreateしてそのモデルを返す
+            $tag = Tag::firstOrCreate(['name' => $tagName]);
+            // 取得したタグ名のモデルを使用し、紐づいているArticle_tagテーブル、Articleテーブルにattach
+            $article->tags()->attach($tag);
+        });
+
+
         return redirect()->route('articles.index');
     }
 
@@ -118,5 +133,34 @@ class ArticleController extends Controller
     public function show(Article $article)
     {
         return view('articles.show', ['article' => $article]);
+    }
+
+    // putリクエスト
+    public function like(Request $request, Article $article)
+    {
+        // detach/attach
+        // $article->likes()で使用した多対多のリレーションで使用可能なDBのCreateメソッド
+        // 呼び出し元(Article)の外部キー(多分)とdetach/attachの引数に指定したuserテーブルのid(likesテーブルの参照先だから？)を
+        // 紐づけるlikesカラムを作成または削除する
+        $article->likes()->detach($request->user()->id);
+        $article->likes()->attach($request->user()->id);
+
+        // アクションの返り値はJson形式に自動変換され、クライアントへのレスポンスとなる
+        // ここではクライアントに対して、いいねした記事idとその記事のいいね数を返す
+        return [
+            'id' => $article->id,
+            'countLikes' => $article->count_likes,
+        ];
+    }
+
+    // deleteリクエスト
+    public function unlike(Request $request, Article $article)
+    {
+        $article->likes()->detach($request->user()->id);
+
+        return [
+            'id' => $article->id,
+            'countLikes' => $article->count_likes,
+        ];
     }
 }

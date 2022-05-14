@@ -1,4 +1,3 @@
-{{-- ナビゲーションメニューのテンプレート --}}
 <nav class="navbar navbar-expand navbar-dark blue-gradient">
 
   <a class="navbar-brand" href="/"><i class="far fa-sticky-note mr-1"></i>memo</a>
@@ -30,7 +29,7 @@
     <!-- Dropdown -->
     <li class="nav-item dropdown">
       <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink" data-toggle="dropdown"
-         aria-haspopup="true" aria-expanded="false">
+        aria-haspopup="true" aria-expanded="false">
         <i class="fas fa-user-circle"></i>
       </a>
       <div class="dropdown-menu dropdown-menu-right dropdown-primary" aria-labelledby="navbarDropdownMenuLink">
@@ -44,7 +43,7 @@
         </button>
       </div>
     </li>
-    {{-- /logoutへのHttpメソッドはPostである必要があるためFormタグを使用 --}}
+    {{-- /logoutへのHttpメソッドはPostである必要があるためformタグを使用 --}}
     {{-- Postの中身は空？ --}}
     {{-- レイアウトが崩れるのでDropDownの中にFormタグは入れない --}}
     <form id="logout-button" method="POST" action="{{ route('logout') }}">
