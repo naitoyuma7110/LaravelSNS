@@ -10,4 +10,12 @@ class Tag extends Model
     protected $fillable = [
         'name',
     ];
+
+
+    // get...Attributeメソッド
+    // $this->hashtagで呼び出す(hashtagというカラムがあるかのように呼び出せる)
+    public function getHashtagAttribute(): string
+    {
+        return '#' . $this->name;
+    }
 }

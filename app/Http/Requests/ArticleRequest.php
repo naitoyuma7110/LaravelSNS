@@ -37,14 +37,14 @@ class ArticleRequest extends FormRequest
     }
 
     // バリデーションエラーのメッセージ内容の変更
-    public function attributes()
-    {
-        return [
-            'title' => 'タイトル',
-            'body' => '本文',
-            'tags' => 'タグ',
-        ];
-    }
+    // public function attributes()
+    // {
+    //     return [
+    //         'title' => 'タイトル',
+    //         'body' => '本文',
+    //         'tags' => 'タグ',
+    //     ];
+    // }
 
     // Json形式で受け取ったタグ情報を整形する
     // passedValidationはバリデーション後に自動的に呼ばれるメソッド

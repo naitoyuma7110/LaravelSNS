@@ -9,7 +9,11 @@
 {{-- このテンプレートはform内で呼び出されるが、ArticleTagsImportはpostメソッドでのリクエストに対応していない --}}
 {{-- ここではコンポーネント内に隠しinputを新しく設置し、フォーム機能を持たせる --}}
 <div class="form-group">
-  <article-tags-input>
+  {{-- editのルーティングでは$tagNameが渡される --}}
+  <article-tags-input
+  :initial-tags='@json($tagNames ?? [])'
+  :autocomplete-items='@json($allTagNames ?? [])'
+  >
   </article-tags-input>
 </div>
 <div class="form-group">

@@ -10,7 +10,7 @@
       <div class="col-12">
         <div class="card mt-3">
           <div class="card-body pt-0">
-            @include('error_card_list')
+              @include('error_card_list')
             <div class="card-text">
               
               {{-- 個別記事のページに対応したidをもつArticleモデルを更新処理のアクションに渡し、ルート名を使ってリダイレクトする --}}

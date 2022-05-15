@@ -68,7 +68,14 @@ class ArticleController extends Controller
 
     public function create()
     {
-        return view('articles.create');
+        $allTagNames = Tag::all()->map(function ($tag) {
+            return ['text' => $tag->name];
+        });
+
+        // 登録されている全タグ名をコレクションに入れて渡す
+        return view('articles.create', [
+            'allTagNames' => $allTagNames,
+        ]);
     }
 
     // 引数の型宣言：$requestはArticlesRequestクラスのインスタンス、$articleはArticleクラスのインスタンスを指定している。
@@ -88,7 +95,7 @@ class ArticleController extends Controller
         // model-DB側のパラメータとrequest情報のパラメータが一致している必要がある？ 
         $article->fill($request->all());
 
-        // ArticleモデルとUserモデルは紐づけ済みであるため->user()でアクセルしidを取得している
+        // ArticleモデルとUserモデルは紐づけ済みであるため->user()でアクセスしidを取得している
         $article->user_id = $request->user()->id;
         $article->save();
 
@@ -112,15 +119,38 @@ class ArticleController extends Controller
     // editアクションは'/article/id/edit'で呼び出されるが、このidをパラメータに持つarticleモデルが作製される
     public function edit(Article $article)
     {
+        // コレクション型のtagsから名前のみを抽出して新たな配列(コレクションへ)
+        $tagNames = $article->tags->map(function ($tag) {
+            return ['text' => $tag->name];
+        });
 
-        // article.bladeにarticleモデルを渡す
-        return view('articles.edit', ['article' => $article]);
+        $allTagNames = Tag::all()->map(function ($tag) {
+            return ['text' => $tag->name];
+        });
+
+        // article.bladeにarticleモデルとタグコレクションを渡す
+        return view('articles.edit', [
+            'article' => $article,
+            'tagNames' => $tagNames,
+            'allTagNames' => $allTagNames,
+        ]);
     }
 
     public function update(ArticleRequest $request, Article $article)
     {
         // form入力内容をArticleRequestインスタンスから取得し、モデルのfill関数でKeyチェックと保存
         $article->fill($request->all())->save();
+
+        // fillで更新されるのはarticleモデルが担当するbody,titleのみ
+        // tagテーブルの操作はリレーションで実行する
+
+        // 一旦この記事とタグとの紐づけをすべて削除し、更新されたタグの名前で再度create
+        $article->tags()->detach();
+        $request->tags->each(function ($tagName) use ($article) {
+            $tag = Tag::firstOrCreate(['name' => $tagName]);
+            $article->tags()->attach($tag);
+        });
+
         return redirect()->route('articles.index');
     }
 

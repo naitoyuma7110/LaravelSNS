@@ -2088,6 +2088,16 @@ __webpack_require__.r(__webpack_exports__);
   components: {
     VueTagsInput: _johmun_vue_tags_input__WEBPACK_IMPORTED_MODULE_0___default.a
   },
+  props: {
+    initialTags: {
+      type: Array,
+      "default": []
+    },
+    autocompleteItems: {
+      type: Array,
+      "default": []
+    }
+  },
   data: function data() {
     return {
       tag: "",
@@ -2101,18 +2111,7 @@ __webpack_require__.r(__webpack_exports__);
       //                tiClasses: ["ti-valid"]
       //              }
       //              ]
-      tags: [],
-      autocompleteItems: [{
-        text: "Spain"
-      }, {
-        text: "France"
-      }, {
-        text: "USA"
-      }, {
-        text: "Germany"
-      }, {
-        text: "China"
-      }]
+      tags: this.initialTags
     };
   },
   computed: {
@@ -6529,7 +6528,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n.vue-tags-input .ti-tag {\r\n    background: transparent;\r\n    border: 1px solid #747373;\r\n    color: #747373;\r\n    margin-right: 4px;\r\n    border-radius: 0px;\r\n    font-size: 13px;\n}\r\n", ""]);
+exports.push([module.i, "\n.vue-tags-input .ti-tag {\r\n    background: transparent;\r\n    border: 1px solid #747373;\r\n    color: #747373;\r\n    margin-right: 4px;\r\n    border-radius: 0px;\r\n    font-size: 13px;\n}\r\n/* vue内の#はCSS */\n.vue-tags-input .ti-tag::before {\r\n    content: \"#\";\n}\r\n", ""]);
 
 // exports
 

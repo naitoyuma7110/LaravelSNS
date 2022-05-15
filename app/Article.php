@@ -64,7 +64,7 @@ class Article extends Model
     // $article->count_likesで呼び出せる(getとAttributeを除くスネークケース+()なし)
 
     // articlesテーブルにはcount_likesというカラムはないが、まるてそうしたカラムがあるかのように
-    // $article->count_likesといった呼び出し方ができるのがアクセサの特徴
+    // $article->count_likesといった呼び出し方ができるのがアクセサの特徴(get-attributeを除きスネークケース)
     public function getCountLikesAttribute(): int
     {
         // 記事のIDに対応したlilesテーブルを取得し数を取得（これがいいね数）
