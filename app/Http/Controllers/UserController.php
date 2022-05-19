@@ -41,6 +41,7 @@ class UserController extends Controller
         ]);
     }
 
+    // フォローボタンを押した際のリクエスト
     public function follow(Request $request, string $name)
     {
         $user = User::where('name', $name)->first();
@@ -58,6 +59,7 @@ class UserController extends Controller
         return ['name' => $name];
     }
 
+    // フォローを外すときのアクション
     public function unfollow(Request $request, string $name)
     {
         $user = User::where('name', $name)->first();
@@ -69,5 +71,35 @@ class UserController extends Controller
         $request->user()->followings()->detach($user);
 
         return ['name' => $name];
+    }
+
+
+    // フォロー数をクリックした時のリダイレクト
+    public function followings(string $name)
+    {
+        $user = User::where('name', $name)->first();
+
+        $followings = $user->followings->sortByDesc('created_at');
+
+        return view(
+            'users.followings',
+            [
+                'user' => $user,
+                'followings' => $followings,
+            ]
+        );
+    }
+
+    // フォロー数をクリックした時のリダイレクト
+    public function followers(string $name)
+    {
+        $user = User::where('name', $name)->first();
+
+        $followers = $user->followers->sortByDesc('created_at');
+
+        return view('users.followers', [
+            'user' => $user,
+            'followers' => $followers,
+        ]);
     }
 }

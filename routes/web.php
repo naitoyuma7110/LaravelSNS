@@ -15,6 +15,15 @@
 // ↓の記述でユーザー登録(Authorize:認証)に関するLaravelのデフォルトのアクション、ルーティングが登録される
 Auth::routes();
 
+// googleAPIの認証{}の部分はプロバイダー名（Google）
+Route::prefix('login')->name('login.')->group(function () {
+  Route::get('/{provider}', 'Auth\LoginController@redirectToProvider')->name('{provider}');
+
+  // googleAPIからのリダイレクトは/login/google/callback
+  // 応答が返ってきたらhandleProviderCallbackを実行
+  Route::get('/{provider}/callback', 'Auth\LoginController@handleProviderCallback')->name('{provider}.callback');
+});
+
 // 個別のルーティング、コントローラーの記述
 // ルート名を追加したデフォルトのArticleに合わせる
 Route::get('/', 'ArticleController@index')->name('articles.index');
@@ -47,6 +56,9 @@ Route::prefix('users')->name('users.')->group(function () {
   // "/users/{name}/...のプレフィックス
   Route::get('/{name}', 'UserController@show')->name('show');
   Route::get('/{name}/likes', 'UserController@likes')->name('likes');
+
+  Route::get('/{name}/followings', 'UserController@followings')->name('followings');
+  Route::get('/{name}/followers', 'UserController@followers')->name('followers');
 
   // "/user/{name}/...にAuth機能追加(ログイン時のみリクエストが通る)"
   Route::middleware('auth')->group(function () {
