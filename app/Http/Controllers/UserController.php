@@ -13,7 +13,7 @@ class UserController extends Controller
     {
 
         // Elequentの検索メソッドの結果はコレクション型のため、単数で使用するためにfirst()で取り出す
-        $user = User::where('name', $name)->first();
+        $user = User::where('name', $name)->first()->load(['articles.user', 'articles.likes', 'articles.tags']);
 
         // このユーザーが投稿した記事を作成順にコレクションで取得する
         $articles = $user->articles->sortByDesc('created_at');
@@ -29,7 +29,7 @@ class UserController extends Controller
     public function likes(string $name)
     {
         // userモデルを取得
-        $user = User::where('name', $name)->first();
+        $user = User::where('name', $name)->first()->load(['likes.user', 'likes.likes', 'likes.tags']);
 
         // リレーションからいいねした記事を新しい順にコレクション型で取得
         $articles = $user->likes->sortByDesc('created_at');
@@ -77,7 +77,7 @@ class UserController extends Controller
     // フォロー数をクリックした時のリダイレクト
     public function followings(string $name)
     {
-        $user = User::where('name', $name)->first();
+        $user = User::where('name', $name)->first()->load('followings.followers');
 
         $followings = $user->followings->sortByDesc('created_at');
 
@@ -93,7 +93,7 @@ class UserController extends Controller
     // フォロー数をクリックした時のリダイレクト
     public function followers(string $name)
     {
-        $user = User::where('name', $name)->first();
+        $user = User::where('name', $name)->first()->load('followers.followers');
 
         $followers = $user->followers->sortByDesc('created_at');
 

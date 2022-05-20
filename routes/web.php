@@ -24,6 +24,17 @@ Route::prefix('login')->name('login.')->group(function () {
   Route::get('/{provider}/callback', 'Auth\LoginController@handleProviderCallback')->name('{provider}.callback');
 });
 
+// Google認証で新規登録を行うためのルーティング
+// 登録済みユーザーの場合はログインしてホームへリダイレクト済み
+Route::prefix('register')->name('register.')->group(function () {
+  // Googleからの新規登録ページ
+  Route::get('/{provider}', 'Auth\RegisterController@showProviderUserRegistrationForm')->name('{provider}');
+
+  // 新規登録ページのPost先
+  Route::post('/{provider}', 'Auth\RegisterController@registerProviderUser')->name('{provider}');
+});
+
+
 // 個別のルーティング、コントローラーの記述
 // ルート名を追加したデフォルトのArticleに合わせる
 Route::get('/', 'ArticleController@index')->name('articles.index');

@@ -61,7 +61,13 @@ class ArticleController extends Controller
             ],
         ];
 
-        $articles = Article::all()->sortByDesc('created_at');
+        // N + 1問題
+        // ここではArticlesテーブルを参照し全ての記事モデルを作成する(SQL＝1)
+        // その後,index.bladeのcard.bladeで取得した記事モデルに対応するUserモデルをUsersテーブルから取得し作成している(SQL=n(ユーザー数))
+        // 記事が1つ増える度、紐づくユーザーを所得するためのSQLがN回(ユーザー数)増えて処理が遅くなる
+        // そこで全記事取得の際  ->load()を使用する事でリレーションを利用しそれぞれの記事に紐づく各モデルも同時に取得できる
+        // 一度作成されたモデルはその後SQLで再度取得する必要がない
+        $articles = Article::all()->sortByDesc('created_at')->load('user', 'likes', 'tags');
 
         return view('articles.index', ['articles' => $articles]);
     }

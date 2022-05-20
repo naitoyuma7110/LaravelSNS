@@ -59,27 +59,38 @@ class LoginController extends Controller
     public function redirectToProvider(string $provider)
     {
         // リダイレクト先はGoogle
+        // Configで設定したGoogle-ID、Seacretを参照している？
         return Socialite::driver($provider)->redirect();
     }
 
     // googleからの返答後のリダイレクト
     public function handleProviderCallback(Request $request, string $provider)
     {
-        // Socialiteは外部APIの認証情報(ユーザーネームやパス)を管理している？
+        // Socialiteは外部プロバイダ用のとして、認証情報(ユーザーネームやパス)を取得できる
         // Google認証を行ったユーザーモデルを取得
+        // この時SocialiteクラスはGoogle側に問い合わせを行っている
         $providerUser = Socialite::driver($provider)->stateless()->user();
 
         // 上記モデルと一致するUserモデルを返す
         $user = User::where('email', $providerUser->getEmail())->first();
 
+        // Google認証したユーザー情報とUserテーブルの情報に一致したものがあれば…
         if ($user) {
             // 上記モデルでログイン(第2引数trueでログイン状態を維持)(rememberMeトークン)
             $this->guard()->login($user, true);
 
             // sendLoginResponseはLaravelに組み込まれたログイン関係のメソッド
+            // 定義元では'/'にリダイレクトする設定
             return $this->sendLoginResponse($request);
         }
 
-        // $userがnullの場合の処理は次のパートでここに書く予定
+        // 一致するUserがいない(未登録)であればGoogleからのログインルートへリダイレクト
+        // route()で{}に指定したパラメータはリクエスト(クエリ)パラメータとしてURLに含まれる
+        // ↓の場合"register/google?email=foobar@gmail.com&token=xxx"のようにGetメソッドが実行される
+        return redirect()->route('register.{provider}', [
+            'provider' => $provider,
+            'email' => $providerUser->getEmail(),
+            'token' => $providerUser->token,
+        ]);
     }
 }
