@@ -16,15 +16,15 @@ class CreateArticleTagTable extends Migration
         Schema::create('article_tag', function (Blueprint $table) {
             // BigInteger:符号なしBIGINT
             // Unsigned:-128~127の正負整数から0~255に設定
-            $table->unsignedBigInteger('id');
-            $table->unsignedBigInteger('article_id');
+            $table->bigIncrements('id');
+            $table->bigInteger('article_id');
             // 外部キー制約
             // articleテーブル(id)-article_tagテーブル(article_id)-tagテーブル(id)の紐づけ
             $table->foreign('article_id')
                 ->references('id')
                 ->on('articles')
                 ->onDelete('cascade');
-            $table->unsignedBigInteger('tag_id');
+            $table->bigInteger('tag_id');
             $table->foreign('tag_id')
                 ->references('id')
                 ->on('tags')

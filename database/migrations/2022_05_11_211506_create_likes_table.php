@@ -29,8 +29,8 @@ class CreateLikesTable extends Migration
             // references(id)->on(users):参照先はusersテーブルのidカラム
             // onDelete:参照先のテーブル(users)からidが削除された場合、対応するlikesテーブルのカラムも削除する
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            // $table->bigInteger('article_id');
-            $table->unsignedBigInteger('article_id');
+            $table->bigInteger('article_id');
+            // $table->unsignedBigInteger('article_id');
 
             $table->foreign('article_id')->references('id')->on('articles')->onDelete('cascade');
 
