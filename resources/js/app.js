@@ -4,11 +4,11 @@
  * building robust, powerful web applications using Vue and Laravel.
  */
 
-import "./bootstrap";
 import Vue from "vue";
 import ArticleLike from "./components/ArticleLike";
 import ArticleTagsInput from "./components/ArticleTagsInput";
 import FollowButton from "./components/FollowButton";
+import "./bootstrap";
 
 const app = new Vue({
     el: "#app",
