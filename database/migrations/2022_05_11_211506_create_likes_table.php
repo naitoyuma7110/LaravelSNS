@@ -23,7 +23,7 @@ class CreateLikesTable extends Migration
             $table->bigIncrements('id');
 
             // $table->bigInteger('user_id');
-            $table->unsignedBigInteger('user_id');
+            $table->bigInteger('user_id');
 
             // forgin:外部キー指定
             // references(id)->on(users):参照先はusersテーブルのidカラム
