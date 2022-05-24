@@ -76,6 +76,6 @@ class Article extends Model
         // article-tags-tagのリレーションを作成
         // 本来は中間テーブルのarticle_tagを第2引数に記述する必要があるが今回は
         // 命名規則にのっとるため省略可能
-        return $this->belongsToMany('App\tag')->withTimestamps();
+        return $this->belongsToMany('App\Tag')->withTimestamps();
     }
 }
